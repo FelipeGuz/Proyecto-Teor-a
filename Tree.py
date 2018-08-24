@@ -44,14 +44,53 @@ for a in letrasProposicionales:
 			else:
 				aux1[b] = i[b]
 		interps.append(aux1)
+print interps[0]["p"]
+#Vi
+def V1(Arb, num):
+    if Arb.Right == None:
+        return interps[num][Arb.Label]
+    elif(Arb.Label == "~"):
+        if(Arb.Right)=='v':
+            return False
+        else:
+            return True
+    elif(Arb.Label=="&"):
+        if(V1(Arb.Left, num)== True and V1(Arb.Right, num)==True):
+            return True
+        else:
+            return False
+    elif(Arb.Label=="v"):
+        if(V1(Arb.Left, num)==True or V1(Arb.Right, num)==True):
+            return True
+        else:
+            return False
+    elif(Arb.Label =="->"):
+        if(V1(Arb.Left, num)==False or V1(Arb.Right, num)==True):
+            return True
+        else:
+            return False
+    elif(Arb.Label=="<->"):
+        if(V1(Arb.Left, num)==V1(Arb.Right, num)):
+            return True
+        else:
+	    return False
+#function that define equivalence
+def Equivalence(A1, A2):
+	for i in range(7):
+		if (V1(A1, i) != V1(A2, i)):
+			return False
+	return True
 #Trees
 P = Tree("p", None, None)
 R = Tree("r", None, None)
 Q = Tree("q", None, None)
-A1 = Tree("Y", Tree("p", None, None), Tree("O", Tree("q", None, None), Tree("r", None, None)))
-A2 = Tree("O", Tree("Y", P, Q), Tree("Y", P, R))
+A1 = Tree("&", Tree("p", None, None), Tree("v", Tree("q", None, None), Tree("r", None, None)))
+A2 = Tree("v", Tree("&", P, Q), Tree("&", P, R))
 D1 = Tree("->", P, Q)
-D2 = Tree("O", Tree("~", None, P), Q)
-arb = Tree("Y", Q, R)
-print arb.toString()
+D2 = Tree("v", Tree("~", None, P), Q)
+C1 = Tree("&", P, Q)
+C2 = Tree("~", None, Tree("v", Tree("~", None, P), Tree("~", None, Q)))
+arb = Tree("&", Q, R)
+print Equivalence(C1, C2)
+
 
