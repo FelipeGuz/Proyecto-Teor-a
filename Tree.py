@@ -91,6 +91,8 @@ D2 = Tree("v", Tree("~", None, P), Q)
 C1 = Tree("&", P, Q)
 C2 = Tree("~", None, Tree("v", Tree("~", None, P), Tree("~", None, Q)))
 arb = Tree("&", Q, R)
+print Equivalence(A1, A2)
 print Equivalence(C1, C2)
+print Equivalence(D1, D2)
 
 
