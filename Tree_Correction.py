@@ -52,21 +52,26 @@ inter2 = Interpretation(letrasProposicionales2)
 #Vi
 def V1(Arb, num, interp):
     if Arb.Right == None:
-	if (interp[num][Arb.Label] == 1):
+	if interp[num][Arb.Label] == 1:
 		return True
-        else:
+        elif interp[num][Arb.Label] == 0:
 		return False
-    elif(Arb.Label == "~"):
-        return not(V1(Arb.Right, num, interp))
-    elif(Arb.Label=="&"):
-        return V1(Arb.Left, num, interp) and V1(Arb.Right, num, interp)
-    elif(Arb.Label=="v"):
-        return V1(Arb.Right, num, interp) or V1(Arb.Left, num, interp)
-    elif(Arb.Label =="->"):
-        if V1(Arb.Right, num, interp) and V1(Arb.Left, num, interp) == False:
+	else:
+		return None
+    elif Arb.Label == "~":
+        return not V1(Arb.Right, num, interp)
+    elif Arb.Label == "&":
+        return V1(Arb.Right, num, interp) and V1(Arb.Left, num, interp)
+    elif Arb.Label == "v":
+        return (V1(Arb.Right, num, interp) or V1(Arb.Left, num, interp))
+    elif Arb.Label == "->" :
+        if V1(Arb.Left, num, interp) == False:
+		return True
+	elif V1(Arb.Right, num, interp) and V1(Arb.Left, num, interp):
+		return True
+	else:
 		return False
-	return True
-    elif(Arb.Label=="<->"):
+    elif(Arb.Label == "<->"):
         if V1(Arb.Right, num, interp) == V1(Arb.Left, num, interp):
 		return True
 	return False
