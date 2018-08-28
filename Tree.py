@@ -1,4 +1,3 @@
-#prueba
 negacion = "~"
 conectoresB = ["Y", "O", "->", "<->"]
 #Class
