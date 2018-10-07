@@ -13,7 +13,7 @@
 # Salida: archivo tablero_%i.png, donde %i es un numero natural
 
 
-def dibujar_tablero(f, n):
+def dibujar_tablero(f, w):
     # Visualiza un tablero dada una formula f
     # Input:
     #   - f, una lista de literales
@@ -98,7 +98,7 @@ def dibujar_tablero(f, n):
             cot = cot+1
 
     plt.show()
-    #fig.savefig("tablero_" + str(n) + ".png")
+    fig.savefig("tablero_" + str(w) + ".png")
 
 
 #################
