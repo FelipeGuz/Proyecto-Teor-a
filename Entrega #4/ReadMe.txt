@@ -4,7 +4,7 @@ Si suelta error instalar Pillow para python con el comando
 	python -m pip install -U Pillow
 Lo mismo para matplotlib y pip
 
-Loslos literalos del 1 al 10 definen las bombas, los del 11 al 20 el numero uno y los
+Los literales del 1 al 10 definen las bombas, los del 11 al 20 el numero uno y los
 del21 al 30 el numero 2.
 ejemplo:
 	~5 quiere decir que no hay bomba en la casilla 5
