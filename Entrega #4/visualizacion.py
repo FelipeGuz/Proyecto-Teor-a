@@ -86,18 +86,35 @@ def dibujar_tablero(f, w):
 
 
     # Cargando imagen de caballo
-    arr_img = plt.imread("bomba.png", format='png')
-    imagebox = OffsetImage(arr_img, zoom=0.13)
+    arr_img_bomb = plt.imread("bomba.png", format='png')
+    imagebox_bomb = OffsetImage(arr_img_bomb, zoom=0.13)
+    arr_img_one = plt.imread("uno.jpg", 0)
+    imagebox_one = OffsetImage(arr_img_one, zoom=0.13)
+    arr_img_two = plt.imread("dos.jpg", 0)
+    imagebox_two = OffsetImage(arr_img_two, zoom=0.13)
     #imagebox.image.axes = axes
 
     cot = 0
+    contador_m = 1
     for l in f:
-        if '~' not in l:
-            ab = AnnotationBbox(imagebox, [0.5, 0.5], frameon=False)
-            axesL[int(l)-1].add_artist(ab)
-            cot = cot+1
+    	if contador_m in range(1, 11):
+	        if '~' not in l:
+	            ab = AnnotationBbox(imagebox_bomb, [0.5, 0.5], frameon=False)
+	            axesL[(int(l)%10)-1].add_artist(ab)
+	            cot = cot+1
+	elif contador_m in range(11, 21):
+		if '~' not in l:
+	            ab = AnnotationBbox(imagebox_one, [0.5, 0.5], frameon=False)
+	            axesL[(int(l)%10)-1].add_artist(ab)
+	            cot = cot+1
+	elif contador_m in range(21, 31):
+		if '~' not in l:
+	            ab = AnnotationBbox(imagebox_two, [0.5, 0.5], frameon=False)
+	            axesL[(int(l)%10)-1].add_artist(ab)
+	            cot = cot+1
+	contador_m += 1
 
-    plt.show()
+    #plt.show()
     fig.savefig("tablero_" + str(w) + ".png")
 
 
