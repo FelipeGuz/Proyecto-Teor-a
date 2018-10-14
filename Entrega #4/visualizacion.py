@@ -1,34 +1,12 @@
 #-*-coding: utf-8-*-
-# Edgar Andrade, Septiembre 2018
-
-# Visualizacion de tableros de ajedrez 4x4 a partir de
-# una lista de literales. Cada literal representa una casilla;
-# el literal es positivo sii hay un caballo en la casilla.
-
-# Formato de la entrada: - las letras proposionales seran: 1, ..., 9;
-#                        - solo se aceptan literales (ej. 1, ~2, 3, ~4, etc.)
-# Requiere tambien un numero natural, para servir de indice del tablero,
-# toda vez que puede solicitarse visualizar varios tableros.
-
-# Salida: archivo tablero_%i.png, donde %i es un numero natural
-
 
 def dibujar_tablero(f, w):
-    # Visualiza un tablero dada una formula f
-    # Input:
-    #   - f, una lista de literales
-    #   - n, un numero de identificacion del archivo
-    # Output:
-    #   - archivo de imagen tablero_n.png
-
-    # Inicializo el plano que contiene la figura
     fig, axes = plt.subplots()
     axes.get_xaxis().set_visible(False)
     axes.get_yaxis().set_visible(False)
 
     axesL = []
 
-    #fig, axes = plt.figure()
     fig.subplots_adjust(bottom=0.02, left=0.03, top = 0.6, right=0.97)
 
     n = 4
@@ -84,34 +62,27 @@ def dibujar_tablero(f, w):
     plt.yticks(())
     axesL.append(axes10)
 
-
-    # Cargando imagen de caballo
     arr_img_bomb = plt.imread("bomba.png", format='png')
     imagebox_bomb = OffsetImage(arr_img_bomb, zoom=0.13)
     arr_img_one = plt.imread("uno.jpg", 0)
     imagebox_one = OffsetImage(arr_img_one, zoom=0.13)
     arr_img_two = plt.imread("dos.jpg", 0)
-    imagebox_two = OffsetImage(arr_img_two, zoom=0.13)
-    #imagebox.image.axes = axes
+    imagebox_two = OffsetImage(arr_img_two, zoom=0.03)
 
-    cot = 0
     contador_m = 1
     for l in f:
     	if contador_m in range(1, 11):
 	        if '~' not in l:
 	            ab = AnnotationBbox(imagebox_bomb, [0.5, 0.5], frameon=False)
 	            axesL[(int(l)%10)-1].add_artist(ab)
-	            cot = cot+1
 	elif contador_m in range(11, 21):
 		if '~' not in l:
 	            ab = AnnotationBbox(imagebox_one, [0.5, 0.5], frameon=False)
 	            axesL[(int(l)%10)-1].add_artist(ab)
-	            cot = cot+1
 	elif contador_m in range(21, 31):
 		if '~' not in l:
 	            ab = AnnotationBbox(imagebox_two, [0.5, 0.5], frameon=False)
 	            axesL[(int(l)%10)-1].add_artist(ab)
-	            cot = cot+1
 	contador_m += 1
 
     #plt.show()
