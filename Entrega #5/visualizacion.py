@@ -99,7 +99,7 @@ import csv
 from sys import argv
 print "Listo!"
 
-data_archivo = "tableros.csv"
+data_archivo = "tableros_automatico.csv"
 with open(data_archivo) as csv_file:
     data = csv.reader(csv_file, delimiter=',')
     contador = 1
