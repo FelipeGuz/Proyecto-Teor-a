@@ -11,6 +11,9 @@ class Tree(object):
 		self.left = left
 		self.right = right
 		self.label = label
+	def __eq__(self, B):
+		if B != None:
+			return (self.label == B.label and self.left == B.left and self.right == B.right)
 
 def Inorder(f):
     # Imprime una formula como cadena dada una formula como arbol
@@ -29,13 +32,14 @@ def StringtoTree(A, letrasProposicionales):
     # Input: A, lista de caracteres con una formula escrita en notacion polaca inversa
              # letrasProposicionales, lista de letras proposicionales
     # Output: formula como tree
+	delimeter = ','
 	conectivos = [negacion, O, Y, implicacion]
 	pila = []
 	letra = ""
 	for c in A:
-		if c not in conectivos and c != ',':
+		if c not in conectivos and c != delimeter:
 			letra += c
-		elif c == ',':
+		elif c == delimeter:
 			if letra in letrasProposicionales:
 				pila.append(Tree(letra, None, None))
 			letra = ""
@@ -116,7 +120,7 @@ def Tableaux(lista_hojas, letrasProposicionales):
 		print u"Cantidad de hojas sin marcar: ", len(hojas_no_marcadas)
 		# Selecciona una hoja no marcada
 		hoja = choice(hojas_no_marcadas)
-		print "Trabajando con hoja: ", imprime_hoja(hoja)
+		#print "Trabajando con hoja: ", imprime_hoja(hoja)
 
 		# Busca formulas que no son literales
 		formulas_no_literales = []
@@ -147,30 +151,40 @@ def Tableaux(lista_hojas, letrasProposicionales):
 				A2 = f.right
 				if  A2 not in hoja:
 					hoja.append(A2) # Agrega A2
+				if Tree(negacion, None, A1) in hoja or Tree(negacion, None, A2) in hoja:
+					lista_hojas.remove(hoja)
 			elif f.label == O:
-				# print u"Fórmula 2beta" # Identifica la formula como B1 o B2
+				#print u"Fórmula 2beta" # Identifica la formula como B1 o B2
 				hoja.remove(f) # Quita la formula de la hoja
 				lista_hojas.remove(hoja) # Quita la hoja de la lista de hojas
+				S1 = [x for x in hoja]
+				S2 = [x for x in hoja]
 				B1 = f.left
 				if  B1 not in hoja:
-					S1 = [x for x in hoja] + [B1] # Crea nueva hoja con B1
-				lista_hojas.append(S1) # Agrega nueva hoja con B1
+					S1.append(B1) # Crea nueva hoja con B1
+				if S1 not in lista_hojas:
+					lista_hojas.append(S1) # Agrega nueva hoja con B1
 				B2 = f.right
 				if B2 not in hoja:
-					S2 = [x for x in hoja] + [B2] # Crea nueva hoja con B2
-				lista_hojas.append(S2) # Agrega nueva hoja con B2
+					S2.append(B2) # Crea nueva hoja con B2
+				if S2 not in lista_hojas:
+					lista_hojas.append(S2) # Agrega nueva hoja con B2
 			elif f.label == implicacion:
-				# print u"Fórmula 3beta" # Identifica la formula como B1 > B2
+				#print u"Fórmula 3beta" # Identifica la formula como B1 > B2
 				hoja.remove(f) # Quita la formula de la hoja
 				lista_hojas.remove(hoja) # Quita la hoja de la lista de hojas
+				S1 = [x for x in hoja]
+				S2 = [x for x in hoja]
 				noB1 = Tree(negacion, None, f.left)
 				if  noB1 not in hoja:
-					S1 = [x for x in hoja] + [noB1] # Crea nueva hoja con no B1
-				lista_hojas.append(S1) # Agrega nueva hoja con no B1
+					S1 += [noB1] # Crea nueva hoja con no B1
+				if S1 not in lista_hojas:
+					lista_hojas.append(S1) # Agrega nueva hoja con no B1
 				B2 = f.right
 				if B2 not in hoja:
 					S2 = [x for x in hoja] + [B2] # Crea nueva hoja con B2
-				lista_hojas.append(S2) # Agrega nueva hoja con B2
+				if S2 not in lista_hojas:
+					lista_hojas.append(S2) # Agrega nueva hoja con B2
 			elif f.label == negacion:
 				if f.right.label == negacion:
 					# print u"Fórmula 1alfa" # Identifica la formula como no no A1
@@ -178,36 +192,50 @@ def Tableaux(lista_hojas, letrasProposicionales):
 					A1 = f.right.right
 					if A1 not in hoja:
 						hoja.append(A1) # Agrega la formula sin doble negacion
+						if Tree(negacion, None, A1) in hoja:
+							lista_hojas.remove(hoja)
 				elif f.right.label == O:
 					# print u"Fórmula 3alfa" # Identifica la formula como no(A1 o A2)
 					hoja.remove(f) # Quita a f de la hoja
 					noA1 = Tree(negacion, None, f.right.left)
 					if noA1 not in hoja:
 						hoja.append(noA1) # Agrega no A1
+						if f.right.left in hoja:
+							lista_hojas.remove(hoja)
 					noA2 = Tree(negacion, None, f.right.right)
 					if noA2 not in hoja:
 						hoja.append(noA2) # Agrega no A2
+						if f.right.right in hoja:
+							lista_hojas.remove(hoja)
 				elif f.right.label == implicacion:
 					# print u"Fórmula 4alfa" # Identifica la formula como no(A1 > A2)
 					hoja.remove(f) # Quita a f de la hoja
 					A1 = f.right.left
 					if A1 not in hoja:
 						hoja.append(A1) # Agrega A1
+						if Tree(negacion, None, A1) in hoja:
+							lista_hojas.remove(hoja)
 					noA2 = Tree(negacion, None, f.right.right)
 					if noA2 not in hoja:
 						hoja.append(noA2) # Agrega no A2
+						if f.right.right in hoja:
+							lista_hojas.remove(hoja)
 				elif f.right.label == Y:
 					# print u"Fórmula 1beta" # Identifica la formula como no(B1 y B2)
 					hoja.remove(f) # Quita la formula de la hoja
 					lista_hojas.remove(hoja) # Quita la hoja de la lista de hojas
+					S1 = [x for x in hoja]
+					S2 = [x for x in hoja]
 					noB1 = Tree(negacion, None, f.right.left)
 					if  noB1 not in hoja:
-						S1 = [x for x in hoja] + [noB1] # Crea nueva hoja con no B1
-					lista_hojas.append(S1) # Agrega nueva hoja con no B2
+						S1 += [noB1] # Crea nueva hoja con no B1
+					if S1 not in lista_hojas:
+						lista_hojas.append(S1) # Agrega nueva hoja con no B2
 					noB2 = Tree(negacion, None, f.right.right)
 					if  noB2 not in hoja:
 						S2 = [x for x in hoja] + [noB2] # Crea nueva hoja con no B2
-					lista_hojas.append(S2) # Agrega nueva hoja con no B2
+					if S2 not in lista_hojas:
+						lista_hojas.append(S2) # Agrega nueva hoja con no B2
 
 		else: # No hay formulas que no sean literales
 			# print "La hoja contiene solo literales!"
