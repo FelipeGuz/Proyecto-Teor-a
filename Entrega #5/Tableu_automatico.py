@@ -19,7 +19,7 @@ for i in range(1, 31):
 
 #Regla 1, no pueden haber 3 objetos en la misma casilla
 formula = ""
-times = 0
+first = True
 for i in letrasproposicionales:
 	implica = ""
 	p = int(i)
@@ -29,30 +29,30 @@ for i in letrasproposicionales:
 		implica = str(p-10)+','+negacion+str(p+10)+','+negacion+Y+i+','+implicacion
 	if p in range(21, 31):
 		implica = str(p-20)+','+negacion+str(p-10)+','+negacion+Y+i+','+implicacion
-	if times == 0:
+	if first:
 		formula = implica
+		first == False
 	else:
 		formula += implica+Y
-	times += 1
 #Regla 2: Solo hay 2 bombas
+disyuncion = ""
 letrasauxiliar = []
+times = True
 for i in range(1, 11):
 	letrasauxiliar.append(str(i))
-other = 0
-for i in letrasauxiliar:
-	aux = [x for x in letrasauxiliar if x != i]
-	for j in aux:
-		aux2 = [x for x in aux if x != j]
-		implica = ""
-		times = 0
-		for p in aux2:
-			if times == 0:
-				implica = p+','+negacion
+for p in letrasauxiliar:
+	aux = [x for x in letrasauxiliar if x != p] # Todas las letras excepto
+	for q in aux:
+			literal = q+','+p+',' + Y
+			aux2 = [x+','+negacion for x in aux if x != q]
+			for k in aux2:
+ 				literal = k + literal + Y
+			if times:
+ 				disyuncion = literal
+				times = False
 			else:
-				implica = implica+p+','+negacion+Y
-			times += 1
-		implica = implica+j+','+i+','+Y+implicacion
-	formula += implica+Y
+				disyuncion = literal + disyuncion + 'v'
+formula += disyuncion+Y
 #Regla 3: regla para los unos
 formula += "11,2,>"+Y
 for i in range(2, 10):
@@ -70,6 +70,7 @@ for i in range(2, 10):
 	formula += implica+Y
 formula += "30,"+negacion+Y
 A = T.StringtoTree(formula, letrasproposicionales)
+
 print "Formula: ", T.Inorder(A)
 
 lista_hojas = [[A]]

@@ -120,7 +120,7 @@ def Tableaux(lista_hojas, letrasProposicionales):
 		print u"Cantidad de hojas sin marcar: ", len(hojas_no_marcadas)
 		# Selecciona una hoja no marcada
 		hoja = choice(hojas_no_marcadas)
-		#print "Trabajando con hoja: ", imprime_hoja(hoja)
+		print "Trabajando con hoja: ", imprime_hoja(hoja)
 
 		# Busca formulas que no son literales
 		formulas_no_literales = []
@@ -151,7 +151,7 @@ def Tableaux(lista_hojas, letrasProposicionales):
 				A2 = f.right
 				if  A2 not in hoja:
 					hoja.append(A2) # Agrega A2
-				if Tree(negacion, None, A1) in hoja or Tree(negacion, None, A2) in hoja:
+				if Tree(negacion, None, A1)in hoja or Tree(negacion, None, A2) in hoja:
 					lista_hojas.remove(hoja)
 			elif f.label == O:
 				#print u"Fórmula 2beta" # Identifica la formula como B1 o B2
