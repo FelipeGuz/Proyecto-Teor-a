@@ -31,7 +31,7 @@ for i in letrasproposicionales:
 		implica = str(p-20)+','+negacion+str(p-10)+','+negacion+Y+i+','+implicacion
 	if first:
 		formula = implica
-		first == False
+		first = False
 	else:
 		formula += implica+Y
 #Regla 2: Solo hay 2 bombas
@@ -61,7 +61,7 @@ for i in range(2, 10):
 		disyuncion = conjuncion1+conjuncion2+O;
 		implica = str(10+i)+','+disyuncion+implicacion
 		formula += implica+Y
-formula += "20,10,>"+Y
+formula += "20,9,>"+Y
 #Regla 4: regla para los 2:
 formula += "21,"+negacion+Y
 for i in range(2, 10):
