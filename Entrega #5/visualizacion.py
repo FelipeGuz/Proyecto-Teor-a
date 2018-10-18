@@ -86,7 +86,15 @@ def dibujar_tablero(f, w):
 	contador_m += 1
 
     #plt.show()
-    fig.savefig("tablero_" + str(w) + ".png")
+    d = 'Soluciones/'
+    try:
+        os.makedirs(d)
+        print "Creando " + d
+    except OSError:
+        if not os.path.isdir(d):
+            raise
+    fig.savefig(d + "tablero_" + str(n) + ".png")
+    print "Imagenes creadas! Verificar la carpeta " + d
 
 
 #################

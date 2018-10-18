@@ -117,10 +117,12 @@ def Tableaux(lista_hojas, letrasProposicionales):
 		# Hay hojas sin marcar
 		# Crea la lista de hojas sin marcar
 		hojas_no_marcadas = [x for x in lista_hojas if x not in marcas]
-		print u"Cantidad de hojas sin marcar: ", len(hojas_no_marcadas)
+		cantidad = len(hojas_no_marcadas)
+		print u"Cantidad de hojas sin marcar: ", cantidad
 		# Selecciona una hoja no marcada
 		hoja = choice(hojas_no_marcadas)
-		print "Trabajando con hoja: ", imprime_hoja(hoja)
+		if (cantidad % 10000) == 0 :
+			print "Trabajando con hoja: ", imprime_hoja(hoja)
 
 		# Busca formulas que no son literales
 		formulas_no_literales = []
