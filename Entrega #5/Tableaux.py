@@ -80,20 +80,6 @@ def imprime_hoja(H):
 		cadena += Inorder(f)
 	return cadena + "}"
 
-def obtiene_literales(cadena, letrasProposicionales):
-	literales = []
-	contador = 0
-	while contador < len(cadena):
-		if cadena[contador] == negacion:
-			l = cadena[contador] + cadena[contador+1]
-			literales.append(l)
-			contador += 1
-		elif cadena[contador] in letrasProposicionales:
-			l = cadena[contador]
-			literales.append(l)
-		contador += 1
-	return literales
-
 
 def Tableaux(lista_hojas, letrasProposicionales):
 
@@ -121,7 +107,7 @@ def Tableaux(lista_hojas, letrasProposicionales):
 		print u"Cantidad de hojas sin marcar: ", cantidad
 		# Selecciona una hoja no marcada
 		hoja = choice(hojas_no_marcadas)
-		if (cantidad % 10000) == 0 :
+		if (len(hojas_no_marcadas)%1000 == 0):
 			print "Trabajando con hoja: ", imprime_hoja(hoja)
 
 		# Busca formulas que no son literales
@@ -240,33 +226,18 @@ def Tableaux(lista_hojas, letrasProposicionales):
 						lista_hojas.append(S2) # Agrega nueva hoja con no B2
 
 		else: # No hay formulas que no sean literales
-			# print "La hoja contiene solo literales!"
-			lista = list(imprime_hoja(hoja))
-			# print lista
-			literales = obtiene_literales(lista, letrasProposicionales)
-			# print literales
-			hojaConsistente = True
-			for l in literales: # Verificamos que no hayan pares complementarios en la hoja
-				if negacion not in l: # Verifica si el literal es positivo
-					if negacion + l in literales: # Verifica si el complementario esta en la hoja
-						print "La hoja " + imprime_hoja(hoja) +  " es inconsistente!"
-						lista_hojas.remove(hoja)
-						# lista_hojas.append('x') # Marca la hoja como inconsistente con una 'x'
-						hojaConsistente = False
-						break
-
-				elif l[1:] in literales: # Verifica si el complementario esta en la hoja
-						print "La hoja " + imprime_hoja(hoja) +  " es inconsistente!"
-						lista_hojas.remove(hoja)
-						# lista_hojas.append('x') # Marca la hoja como inconsistente con una 'x'
-						hojaConsistente = False
-						break
-
-			if hojaConsistente: # Se recorrieron todos los literales y no esta el complementario
-				print "La hoja " + imprime_hoja(hoja) +  " es consistente :)"
-				interpretaciones.append(hoja) # Guarda la interpretacion que satisface la raiz
+			p = True
+			for i in letrasProposicionales:
+				t = Tree(i, None, None)
+				if t in hoja and Tree("~", None, t) in hoja:
+					print "La hoja es inconcistente porque esta las dos formas de ", Inorder(t)
+					lista_hojas.remove(hoja)
+					p = False
+					break
+			if p:
+				print "La hoja es consistente"
+				interpretaciones.append(hoja)
 				lista_hojas.remove(hoja)
-				# lista_hojas.append('o') # Marca la hoja como consistente con una 'o'
 
 	# Dice si la raiz es inconsistente
 	# print "Hay " + str(len(interpretaciones)) + u" interpretaciones que satisfacen la fórmula"
