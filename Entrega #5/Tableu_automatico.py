@@ -17,24 +17,8 @@ letrasproposicionales = []
 for i in range(1, 31):
 	letrasproposicionales.append(str(i))
 
-#Regla 1, no pueden haber 3 objetos en la misma casilla
+#Regla 1, Solo hay 2 bombas
 formula = ""
-first = True
-for i in letrasproposicionales:
-	implica = ""
-	p = int(i)
-	if p in range(1, 11):
-		implica = str(p+10)+','+negacion+str(p+20)+','+negacion+Y+i+','+implicacion
-	if p in range(11, 21):
-		implica = str(p-10)+','+negacion+str(p+10)+','+negacion+Y+i+','+implicacion
-	if p in range(21, 31):
-		implica = str(p-20)+','+negacion+str(p-10)+','+negacion+Y+i+','+implicacion
-	if first:
-		formula = implica
-		first = False
-	else:
-		formula += implica+Y
-#Regla 2: Solo hay 2 bombas
 disyuncion = ""
 letrasauxiliar = []
 times = True
@@ -52,8 +36,8 @@ for p in letrasauxiliar:
 				times = False
 			else:
 				disyuncion = literal + disyuncion + 'v'
-formula += disyuncion+Y
-#Regla 3: regla para los unos
+formula = disyuncion
+#Regla 2: regla para los unos
 formula += "11,2,>"+Y
 for i in range(2, 10):
 		conjuncion1 = str(i-1)+','+str(i+1)+','+Y
@@ -62,7 +46,7 @@ for i in range(2, 10):
 		implica = disyuncion+str(10+i)+','+negacion+implicacion
 		formula += implica+Y
 formula += "20,9,>"+Y
-#Regla 4: regla para los 2:
+#Regla 3: regla para los 2:
 formula += "21,"+negacion+Y
 for i in range(2, 10):
 	conjuncion = str(i-1)+','+str(i+1)+','+Y
