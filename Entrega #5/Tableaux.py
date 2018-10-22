@@ -95,20 +95,19 @@ def Tableaux(lista_hojas, letrasProposicionales):
 
 	print "Trabajando con: ", imprime_tableau(lista_hojas)
 
-	marcas = ['x', 'o']
 	interpretaciones = [] # Lista para guardar interpretaciones que satisfacen la raiz
 
-	while any(x not in marcas for x in lista_hojas): # Verifica si hay hojas no marcadas
+	while len(lista_hojas) > 0: # Verifica si hay hojas no marcadas
 
 		# Hay hojas sin marcar
 		# Crea la lista de hojas sin marcar
-		hojas_no_marcadas = [x for x in lista_hojas if x not in marcas]
-		cantidad = len(hojas_no_marcadas)
+		booleano = True
+		cantidad = len(lista_hojas)
 		print u"Cantidad de hojas sin marcar: ", cantidad
 		# Selecciona una hoja no marcada
-		hoja = choice(hojas_no_marcadas)
-		if (len(hojas_no_marcadas)%1000 == 0):
-			print "Trabajando con hoja: ", imprime_hoja(hoja)
+		hoja = choice(lista_hojas)
+		#if (len(hojas_no_marcadas)%1000 == 0):
+		#print "Trabajando con hoja: ", imprime_hoja(hoja)
 
 		# Busca formulas que no son literales
 		formulas_no_literales = []
@@ -136,11 +135,16 @@ def Tableaux(lista_hojas, letrasProposicionales):
 				A1 = f.left
 				if  A1 not in hoja:
 					hoja.append(A1) # Agrega A1
+					if Tree(negacion, None, A1) in hoja:
+						lista_hojas.remove(hoja)
+						booleano = False
+						print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(A1), " esta en sus 2 formas"
 				A2 = f.right
 				if  A2 not in hoja:
 					hoja.append(A2) # Agrega A2
-				if Tree(negacion, None, A1)in hoja or Tree(negacion, None, A2) in hoja:
-					lista_hojas.remove(hoja)
+					if Tree(negacion, None, A1) in hoja and booleano:
+						lista_hojas.remove(hoja)
+						print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(A2), " esta en sus 2 formas"
 			elif f.label == O:
 				#print u"Fórmula 2beta" # Identifica la formula como B1 o B2
 				hoja.remove(f) # Quita la formula de la hoja
@@ -150,13 +154,22 @@ def Tableaux(lista_hojas, letrasProposicionales):
 				B1 = f.left
 				if  B1 not in hoja:
 					S1.append(B1) # Crea nueva hoja con B1
-				if S1 not in lista_hojas:
+					if Tree(negacion, None, B1) in S1:
+						booleano = False
+				if S1 not in lista_hojas and booleano:
 					lista_hojas.append(S1) # Agrega nueva hoja con B1
+				elif not booleano:
+					booleano = True
+					print "No se agrego la hoja ", imprime_hoja(S1), " porque ", Inorder(B1), " estaba en sus 2 formas"
 				B2 = f.right
 				if B2 not in hoja:
 					S2.append(B2) # Crea nueva hoja con B2
-				if S2 not in lista_hojas:
+					if Tree(negacion, None, B2) in S2:
+						booleano = False
+				if S2 not in lista_hojas and booleano:
 					lista_hojas.append(S2) # Agrega nueva hoja con B2
+				elif not booleano:
+					print "No se agrego la hoja ", imprime_hoja(S2), " porque ", Inorder(B2), " estaba en sus 2 formas"
 			elif f.label == implicacion:
 				#print u"Fórmula 3beta" # Identifica la formula como B1 > B2
 				hoja.remove(f) # Quita la formula de la hoja
@@ -165,14 +178,23 @@ def Tableaux(lista_hojas, letrasProposicionales):
 				S2 = [x for x in hoja]
 				noB1 = Tree(negacion, None, f.left)
 				if  noB1 not in hoja:
-					S1 += [noB1] # Crea nueva hoja con no B1
-				if S1 not in lista_hojas:
+					S1.append(noB1) # Crea nueva hoja con no B1
+					if f.left in S1:
+						booleano = False
+				if S1 not in lista_hojas and booleano:
 					lista_hojas.append(S1) # Agrega nueva hoja con no B1
+				elif not booleano:
+					booleano = True
+					print "No se agrego la hoja ", imprime_hoja(S1), " porque ", Inorder(f.left), " estaba en sus 2 formas"
 				B2 = f.right
 				if B2 not in hoja:
-					S2 = [x for x in hoja] + [B2] # Crea nueva hoja con B2
-				if S2 not in lista_hojas:
+					S2.append(B2)
+					if Tree(negacion, None, B2) in S2:
+						booleano = False
+				if S2 not in lista_hojas and booleano:
 					lista_hojas.append(S2) # Agrega nueva hoja con B2
+				elif not booleano:
+					print "No se agrego la hoja ", imprime_hoja(S2), " porque ", Inorder(B2), " estaba en sus 2 formas"
 			elif f.label == negacion:
 				if f.right.label == negacion:
 					# print u"Fórmula 1alfa" # Identifica la formula como no no A1
@@ -182,6 +204,7 @@ def Tableaux(lista_hojas, letrasProposicionales):
 						hoja.append(A1) # Agrega la formula sin doble negacion
 						if Tree(negacion, None, A1) in hoja:
 							lista_hojas.remove(hoja)
+							print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(A1), " esta en sus 2 formas"
 				elif f.right.label == O:
 					# print u"Fórmula 3alfa" # Identifica la formula como no(A1 o A2)
 					hoja.remove(f) # Quita a f de la hoja
@@ -190,11 +213,14 @@ def Tableaux(lista_hojas, letrasProposicionales):
 						hoja.append(noA1) # Agrega no A1
 						if f.right.left in hoja:
 							lista_hojas.remove(hoja)
+							booleano = False
+							print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(f.right.left), " esta en sus 2 formas"
 					noA2 = Tree(negacion, None, f.right.right)
 					if noA2 not in hoja:
 						hoja.append(noA2) # Agrega no A2
-						if f.right.right in hoja:
+						if f.right.right in hoja and booleano:
 							lista_hojas.remove(hoja)
+							print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(f.right.right), "esta en sus 2 formas"
 				elif f.right.label == implicacion:
 					# print u"Fórmula 4alfa" # Identifica la formula como no(A1 > A2)
 					hoja.remove(f) # Quita a f de la hoja
@@ -203,11 +229,14 @@ def Tableaux(lista_hojas, letrasProposicionales):
 						hoja.append(A1) # Agrega A1
 						if Tree(negacion, None, A1) in hoja:
 							lista_hojas.remove(hoja)
+							booleano
+							print "Se elimino la hoja ", imprime_hoja(hoja), " porque ", Inorder(A1), " esta en sus 2 formas"
 					noA2 = Tree(negacion, None, f.right.right)
 					if noA2 not in hoja:
 						hoja.append(noA2) # Agrega no A2
-						if f.right.right in hoja:
+						if f.right.right in hoja and booleano:
 							lista_hojas.remove(hoja)
+							print "Se elimino la hoja ", imprime_hoja(hoja), " porque habia una formula y su negacion"
 				elif f.right.label == Y:
 					# print u"Fórmula 1beta" # Identifica la formula como no(B1 y B2)
 					hoja.remove(f) # Quita la formula de la hoja
@@ -216,26 +245,35 @@ def Tableaux(lista_hojas, letrasProposicionales):
 					S2 = [x for x in hoja]
 					noB1 = Tree(negacion, None, f.right.left)
 					if  noB1 not in hoja:
-						S1 += [noB1] # Crea nueva hoja con no B1
-					if S1 not in lista_hojas:
+						S1.append(noB1) # Crea nueva hoja con no B1
+						if f.right.left in S1:
+							booleano = False
+					if S1 not in lista_hojas and booleano:
 						lista_hojas.append(S1) # Agrega nueva hoja con no B2
+					elif not booleano:
+						print "No se agrego la hoja ", imprime_hoja(S1), " porque ", Inorder(f.right.left), " estaba en sus 2 formas"
+						booleano = True
 					noB2 = Tree(negacion, None, f.right.right)
 					if  noB2 not in hoja:
-						S2 = [x for x in hoja] + [noB2] # Crea nueva hoja con no B2
-					if S2 not in lista_hojas:
+						S2.append(noB2) # Crea nueva hoja con no B2
+						if f.right.right in S2:
+							booleano = False
+					if S2 not in lista_hojas and booleano:
 						lista_hojas.append(S2) # Agrega nueva hoja con no B2
+					elif not booleano:
+						print "No se agrego la hoja ", imprime_hoja(S2), " porque ", Inorder(f.right.right), " estaba en sus 2 formas"
 
 		else: # No hay formulas que no sean literales
 			p = True
 			for i in letrasProposicionales:
 				t = Tree(i, None, None)
 				if t in hoja and Tree("~", None, t) in hoja:
-					print "La hoja es inconcistente porque esta las dos formas de ", Inorder(t)
+					print "La hoja ", imprime_hoja(hoja), " es inconcistente porque esta las dos formas de ", Inorder(t)
 					lista_hojas.remove(hoja)
 					p = False
 					break
 			if p:
-				print "La hoja es consistente"
+				print "La hoja ", imprime_hoja(hoja), " es consistente"
 				interpretaciones.append(hoja)
 				lista_hojas.remove(hoja)
 
