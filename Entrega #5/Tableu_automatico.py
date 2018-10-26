@@ -38,21 +38,21 @@ for p in letrasauxiliar:
 				disyuncion = literal + disyuncion + 'v'
 formula = disyuncion
 #Regla 2: regla para los unos
-"""formula += "11,2,>"+Y
+formula += "11,2,1,~&>"+Y
 for i in range(2, 10):
 		conjuncion1 = str(i-1)+','+str(i+1)+','+Y
 		conjuncion2 = str(i-1)+','+negacion+str(i+1)+','+negacion+Y
-		disyuncion = conjuncion1+conjuncion2+O;
+		disyuncion = conjuncion1+conjuncion2+O+str(i)+","+O;
 		implica = disyuncion+str(10+i)+','+negacion+implicacion
 		formula += implica+Y
-formula += "20,9,>"+Y
+formula += "20,9,10,~&>"+Y
 #Regla 3: regla para los 2:
 formula += "21,"+negacion+Y
 for i in range(2, 10):
-	conjuncion = str(i-1)+','+str(i+1)+','+Y
+	conjuncion = str(i-1)+','+str(i+1)+','+Y+str(i)+","+negacion+Y
 	implica = str(20+i)+','+conjuncion+implicacion
 	formula += implica+Y
-formula += "30,"+negacion+Y"""
+formula += "30,"+negacion+Y
 A = T.StringtoTree(formula, letrasproposicionales)
 
 print "Formula: ", T.Inorder(A)
