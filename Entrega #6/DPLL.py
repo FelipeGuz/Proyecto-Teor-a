@@ -15,7 +15,7 @@ def Inorder(f):
 
     if f.right == None:
         return f.label
-    elif f.label == '-':
+    elif f.label == '~':
         return f.label + Inorder(f.right)
     else:
         return "(" + Inorder(f.left) + f.label + Inorder(f.right) + ")"
@@ -26,7 +26,7 @@ def StringtoTree(A, letrasProposicionales):
              # letrasProposicionales, lista de letras proposicionales
     # Output: formula como tree
     delimeter = ','
-    conectivos = ['-', 'O', 'Y', '>']
+    conectivos = ['~', 'v', '&', '>']
     pila = []
     letra = ""
     for c in A:
@@ -37,11 +37,11 @@ def StringtoTree(A, letrasProposicionales):
                 pila.append(Tree(letra, None, None))
             letra = ""
         else :
-            if c == '-':
+            if c == '~':
                 formulaAux = Tree(c, None, pila[-1])
                 del pila[-1]
                 pila.append(formulaAux)
-            elif c in conectivos and c != '-':
+            elif c in conectivos and c != '~':
                 formulaAux = Tree(c, pila[-1], pila[-2])
                 del pila[-1]
                 del pila[-1]
@@ -55,11 +55,11 @@ def quitarDobleNegacion(f):
 
     if f.right == None:
         return f
-    elif f.label == '-':
-        if f.right.label == '-':
+    elif f.label == '~':
+        if f.right.label == '~':
             return quitarDobleNegacion(f.right.right)
         else:
-            return Tree('-', \
+            return Tree('~', \
                         None, \
                         quitarDobleNegacion(f.right)\
                         )
@@ -76,12 +76,12 @@ def reemplazarImplicacion(f):
 
     if f.right == None:
         return f
-    elif f.label == '-':
-        return Tree('-', None, reemplazarImplicacion(f.right))
+    elif f.label == '~':
+        return Tree('~', None, reemplazarImplicacion(f.right))
     elif f.label == '>':
-        noP = Tree('-', None, reemplazarImplicacion(f.left))
+        noP = Tree('~', None, reemplazarImplicacion(f.left))
         Q = reemplazarImplicacion(f.right)
-        return Tree('O', noP, Q)
+        return Tree('v', noP, Q)
     else:
         return Tree(f.label, reemplazarImplicacion(f.left), reemplazarImplicacion(f.right))
 
@@ -92,21 +92,21 @@ def deMorgan(f):
 
     if f.right == None:
         return f
-    elif f.label == '-':
-        if f.right.label == 'Y':
+    elif f.label == '~':
+        if f.right.label == '&':
             print "La formula coincide negacion Y"
-            return Tree('O', \
-                        Tree('-', None, deMorgan(f.right.left)),\
-                        Tree('-', None, deMorgan(f.right.right))\
+            return Tree('v', \
+                        Tree('~', None, deMorgan(f.right.left)),\
+                        Tree('~', None, deMorgan(f.right.right))\
                         )
-        elif f.right.label == 'O':
+        elif f.right.label == 'v':
             print "La formula coincide negacion O"
-            return Tree('Y', \
-                        Tree('-', None, deMorgan(f.right.left)),\
-                        Tree('-', None, deMorgan(f.right.right))\
+            return Tree('&', \
+                        Tree('~', None, deMorgan(f.right.left)),\
+                        Tree('~', None, deMorgan(f.right.right))\
                         )
         else:
-            return Tree('-', \
+            return Tree('~', \
                         None, \
                         deMorgan(f.right) \
                         )
@@ -124,25 +124,25 @@ def distributiva(f):
     if f.right == None:
         print("Llegamos a una rama")
         return f
-    elif f.label == 'O':
+    elif f.label == 'v':
         print("Encontramos O...")
-        if f.left.label == 'Y':
+        if f.left.label == '&':
             print("... encontramos Y a la izquierda")
             P = f.left.left
             Q = f.left.right
             R = f.right
-            return Tree('Y', \
-                        Tree('O', P, R), \
-                        Tree('O', Q, R)
+            return Tree('&', \
+                        Tree('v', P, R), \
+                        Tree('v', Q, R)
                         )
-        if f.right.label == 'Y':
+        if f.right.label == '&':
             print("... encontramos Y a la derecha")
             R = f.left
             P = f.right.left
             Q = f.right.right
-            return Tree('Y', \
-                        Tree('O', R, P), \
-                        Tree('O', R, Q)
+            return Tree('&', \
+                        Tree('v', R, P), \
+                        Tree('v', R, Q)
                         )
         else:
             print("... pero no hay Y")
@@ -151,9 +151,9 @@ def distributiva(f):
                         distributiva(f.left), \
                         distributiva(f.right)
                         )
-    elif f.label == '-':
+    elif f.label == '~':
         print("Pasamos a hijo de negacion")
-        return Tree('-', \
+        return Tree('~', \
                     None, \
                     distributiva(f.right)
                     )
@@ -189,9 +189,9 @@ def eliminaConjunciones(f):
         a = [Inorder(f)]
         print "Clausula unitaria positiva, ", a
         return a
-    elif f.label == 'O':
+    elif f.label == 'v':
         return [Inorder(f)]
-    elif f.label == 'Y':
+    elif f.label == '&':
         print "Dividiendo los lados de la conjuncion"
         a = eliminaConjunciones(f.left)
         print("a, ", a)
@@ -201,7 +201,7 @@ def eliminaConjunciones(f):
         print("c, ", c)
         return a + b
     else:
-        if f.label == '-':
+        if f.label == '~':
             if f.right.right == None:
                 print "Clausula unitaria negativa"
                 return [Inorder(f)]
@@ -212,10 +212,10 @@ def complemento(l):
     # Devuelve el complemento de un literal
     # Input: l, que es una cadena con un literal (ej: p, -p)
     # Output: l complemento
-    if '-' in l:
+    if '~' in l:
         return l[1:]
     else:
-        return '-' + l
+        return '~' + l
 
 def formaClausal(f):
     # Obtiene la forma clausal de una formula en CNF
@@ -230,7 +230,7 @@ def formaClausal(f):
     conjuntoClausulas = []
     for C in aux:
         C = ''.join([x for x in C if x not in badChars])
-        C = C.split('O')
+        C = C.split('v')
         conjuntoClausulas.append(C)
 
     aux = []
@@ -270,9 +270,9 @@ def unitPropagate(f, letrasProposicionales, interpretaciones):
         for i in f:
             if len(i) == 1:
                 literal = i[0]
-                if not '-' in literal and literal in letrasProposicionales:
+                if not '~' in literal and literal in letrasProposicionales:
                     interpretaciones[literal] = True
-                elif '-' in literal and literal[1:] in letrasProposicionales:
+                elif '~' in literal and literal[1:] in letrasProposicionales:
                     interpretaciones[literal[1:]] = False
                 f.pop(f.index(i))
                 for j in f:
@@ -303,7 +303,7 @@ def DPLL(S,letrasProposicionales,I):
                     Sp.append(temp)
                 else:
                     Sp.append(i)
-        if('-' in x):
+        if('~' in x):
             Ip[x[1]] = False
         else:
             Ip[x] = True
@@ -359,10 +359,10 @@ for i in range(1, 11):
 for p in letrasauxiliar:
 	aux = [x for x in letrasauxiliar if x != p] # Todas las letras excepto
 	for q in aux:
-			literal = q+','+p+',' + 'Y'
-			aux2 = [x+','+'-' for x in aux if x != q]
+			literal = q+','+p+',' + '&'
+			aux2 = [x+','+'~' for x in aux if x != q]
 			for k in aux2:
- 				literal = k + literal + 'Y'
+ 				literal = k + literal + '&'
 			if times:
  				disyuncion = literal
 				times = False
@@ -370,21 +370,21 @@ for p in letrasauxiliar:
 				disyuncion = literal + disyuncion + 'v'
 formula = disyuncion
 #Regla 2: regla para los unos
-formula += "11,2,1,~&>"+'Y'
+formula += "11,2,1,~&>"+'&'
 for i in range(2, 10):
-		conjuncion1 = str(i-1)+','+str(i+1)+','+'Y'
-		conjuncion2 = str(i-1)+','+'-'+str(i+1)+','+'-'+'Y'
-		disyuncion = conjuncion1+conjuncion2+'O'+str(i)+","+'O';
-		implica = disyuncion+str(10+i)+','+'-'+'>'
-		formula += implica+'Y'
-formula += "20,9,10,~&>"+'Y'
+		conjuncion1 = str(i-1)+','+str(i+1)+','+'&'
+		conjuncion2 = str(i-1)+','+'~'+str(i+1)+','+'~'+'&'
+		disyuncion = conjuncion1+conjuncion2+'v'+str(i)+","+'v';
+		implica = disyuncion+str(10+i)+','+'~'+'>'
+		formula += implica+'&'
+formula += "20,9,10,~&>"+'&'
 #Regla 3: regla para los 2:
-formula += "21,"+'-'+'Y'
+formula += "21,"+'~'+'&'
 for i in range(2, 10):
-	conjuncion = str(i-1)+','+str(i+1)+','+'Y'+str(i)+","+'-'+'Y'
+	conjuncion = str(i-1)+','+str(i+1)+','+'&'+str(i)+","+'~'+'&'
 	implica = str(20+i)+','+conjuncion+'>'
-	formula += '>'+'Y'
-formula += "30,"+'-'+'Y'
+	formula += implica+'&'
+formula += "30,"+'~'+'&'
 
 A = StringtoTree(formula, letrasProposicionales)
 
